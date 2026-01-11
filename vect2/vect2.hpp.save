@@ -3,13 +3,13 @@
 
 class vect2
 {
-public:
+Public:
 	vect2(): x(0), y(0) {}
 	vect2(int x0, int y0): x(x0), y(y0) {}
 	vect2(const vect2& v);
 	vect2 operator=(const vect2& v);
-	~vect2() {}
-private:
+	~vect2
+Private:
 	int x, y;
 };
 
