@@ -37,12 +37,45 @@ bigint bigint::operator+(const bigint& num) const
 	result.str = std::string(res.rbegin(), res.rend());
 	return result;
 }
+
+bool bigint::operator<(const bigint& num) const
+{
+	if (str.size() != num.str.size()) return (str.size() < num.str.size());
+	return (str < num.str);
+}
+
 bigint bigint::operator<<(int n) const
 {
 	bigint res;
-	if (str == '0' || n = 0) return this;
-	res = this;
-	res.str.append('0',n);
+	if (str == "0" || n == 0) return *this;
+	res = *this;
+	res.str.append(n, '0');
 	return res;
 }
-	
+
+bigint bigint::operator>>(int n) const
+{
+	if (str.size() <= (size_t)n) return bigint(0);
+	if (n <= 0) return *this;
+	bigint res;
+	res.str = str.substr(0, str.size() - n);
+	return res;
+}
+
+int toInt(const bigint& num)
+{
+	int res;
+	std::istringstream iss(num.str);
+	iss >> res;
+	return res;
+}
+
+bigint bigint::operator<<(const bigint& n) const
+{
+	return *this << toInt(n);
+}
+
+bigint bigint::operator>>(const bigint& n) const
+{
+	return *this >> toInt(n);
+}

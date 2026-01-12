@@ -23,14 +23,16 @@ int main(void)
 
 	// b = 23, b << 10 -> 23000000000 + 42 = 23000000042
 	std::cout << "(b << 10) + 42 = " << ((b << 10) + 42) << std::endl;
-/*
-	std::cout << "(d <<= 4) = " << (d <<= 4) << ", d: " << d << std::endl;
-	std::cout << "(d >>= 2) = " << (d >>= (const bigint)2) << ", d: " << d << std::endl;
+//	std::cout << "(d >> 2) = " << (d >> 2) << std::endl;
+
+//	std::cout << "(d <<= 4) = " << (d <<= 4) << ", d: " << d << std::endl;
+//	std::cout << "(d >>= 2) = " << (d >>= (const bigint)2) << ", d: " << d << std::endl;
+	std::cout << "(d >> 2) = " << (d >> (bigint)2) << ", d: " << d << std::endl;
 
 	std::cout << "a = " << a << std::endl; // a = 42
 	std::cout << "d = " << d << std::endl; // d = 5348
-
 	std::cout << "(d < a) = " << (d < a) << std::endl; // (d < a) = 0
+/*
 	std::cout << "(d > a) = " << (d > a) << std::endl; // (d > a) = 1
 	std::cout << "(d == d) = " << (d == d) << std::endl; // (d == d) = 1
 	std::cout << "(d != a) = " << (d != a) << std::endl; // (d != a) = 1
