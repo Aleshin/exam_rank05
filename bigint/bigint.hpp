@@ -14,11 +14,26 @@ public:
 	~bigint() {}
 	
 	bigint operator+(const bigint& other) const;
+	bigint& operator+=(const bigint& other);
+	bigint& operator++();
+	bigint operator++(int);
+	
 	bool operator<(const bigint& other) const;
+	bool operator<=(const bigint& other) const;
+	bool operator>(const bigint& other) const;
+	bool operator>=(const bigint& other) const;
+	bool operator==(const bigint& other) const;
+	bool operator!=(const bigint& other) const;
+	
 	bigint operator<<(int n) const;
 	bigint operator>>(int n) const;
 	bigint operator<<(const bigint& n) const;
 	bigint operator>>(const bigint& n) const;
+	bigint& operator<<=(int n);
+	bigint& operator>>=(int n);
+	bigint& operator<<=(const bigint& n);
+	bigint& operator>>=(const bigint& n);
+	
 	bigint& operator=(const bigint& other);
 	friend std::ostream& operator<<(std::ostream& os, const bigint& num);
 	friend int toInt(const bigint& num);

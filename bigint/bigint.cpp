@@ -79,3 +79,71 @@ bigint bigint::operator>>(const bigint& n) const
 {
 	return *this >> toInt(n);
 }
+
+bigint& bigint::operator+=(const bigint& other)
+{
+	*this = *this + other;
+	return *this;
+}
+
+bigint& bigint::operator++()
+{
+	*this = *this + bigint(1);
+	return *this;
+}
+
+bigint bigint::operator++(int)
+{
+	bigint tmp(*this);
+	++(*this);
+	return tmp;
+}
+
+bool bigint::operator<=(const bigint& other) const
+{
+	return !(other < *this);
+}
+
+bool bigint::operator>(const bigint& other) const
+{
+	return other < *this;
+}
+
+bool bigint::operator>=(const bigint& other) const
+{
+	return !(*this < other);
+}
+
+bool bigint::operator==(const bigint& other) const
+{
+	return str == other.str;
+}
+
+bool bigint::operator!=(const bigint& other) const
+{
+	return !(*this == other);
+}
+
+bigint& bigint::operator<<=(int n)
+{
+	*this = *this << n;
+	return *this;
+}
+
+bigint& bigint::operator>>=(int n)
+{
+	*this = *this >> n;
+	return *this;
+}
+
+bigint& bigint::operator<<=(const bigint& n)
+{
+	*this = *this << n;
+	return *this;
+}
+
+bigint& bigint::operator>>=(const bigint& n)
+{
+	*this = *this >> n;
+	return *this;
+}
