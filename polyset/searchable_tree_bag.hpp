@@ -9,9 +9,5 @@ public:
 	searchable_tree_bag(const searchable_tree_bag& src);
 	searchable_tree_bag& operator=(const searchable_tree_bag& src);
 	~searchable_tree_bag();
-
-	virtual bool has(int value) const;
-
-private:
-	bool search_node(node* current, int value) const;
+	bool has(int value) const;
 };
