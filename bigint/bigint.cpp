@@ -1,10 +1,16 @@
 #include "bigint.hpp"
 
-bigint::bigint(unsigned int n)
+bigint::bigint(unsigned long long n)
 {
 	std::ostringstream oss;
 	oss << n;
 	str = oss.str();
+}
+
+bigint::bigint(const std::string& s): str(s)
+{
+	str.erase(0, str.find_first_not_of('0'));
+	if (str.empty()) str = "0";
 }
 std::ostream& operator<<(std::ostream& os, const bigint& num)
 {
@@ -55,8 +61,8 @@ bigint bigint::operator<<(int n) const
 
 bigint bigint::operator>>(int n) const
 {
-	if (str.size() <= (size_t)n) return bigint(0);
 	if (n <= 0) return *this;
+	if (str.size() <= (size_t)n) return bigint(0);
 	bigint res;
 	res.str = str.substr(0, str.size() - n);
 	return res;

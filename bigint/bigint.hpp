@@ -2,14 +2,14 @@
 #define BIGINT_HPP
 #include <string>
 #include <sstream>
-#include <ostream>
 #include <iostream>
 
 class bigint
 {
 public:
 	bigint(): str("0") {}
-	bigint(unsigned int n);
+	bigint(unsigned long long n);
+	bigint(const std::string& s);
 	bigint(const bigint& other): str(other.str) {}
 	~bigint() {}
 	
