@@ -1,0 +1,165 @@
+ALGORITHM GUIDE FOR BSQ
+=======================
+
+APPROACH: Dynamic Programming with Histogram
+
+The recommended O(n*m) solution uses:
+1. Build height array for each row (consecutive empty cells above)
+2. Apply "largest rectangle in histogram" algorithm
+3. Track maximum square and position
+
+IMPLEMENTATION SKETCH
+
+int find_square(map, rows, cols, empty_char, 
+               int *best_row, int *best_col, int *size)
+{
+    int *height = calloc(cols, sizeof(int));
+    int max_size = 0;
+    *best_row = 0;
+    *best_col = 0;
+    
+    for (int i = 0; i < rows; i++) {
+        // Update heights
+        for (int j = 0; j < cols; j++) {
+            if (map[i][j] == empty_char)
+                height[j]++;
+            else
+                height[j] = 0;
+        }
+        
+        // Find largest square in histogram
+        for (int j = 0; j < cols; j++) {
+            int h = height[j];
+            for (int w = h; w >= 1; w--) {
+                // Check if can make square of size h×h
+                int valid = 1;
+                for (int k = 0; k < h && valid; k++) {
+                    if (j-k < 0 || height[j-k] < h)
+                        valid = 0;
+                }
+                
+                if (valid && h >= max_size) {
+                    if (h > max_size || 
+                        i-h+1 < *best_row ||
+                        (i-h+1 == *best_row && j-h+1 < *best_col)) {
+                        max_size = h;
+                        *best_row = i - h + 1;
+                        *best_col = j - h + 1;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    free(height);
+    return max_size;
+}
+
+HEADER PARSING (CRITICAL!)
+
+int parse_header(FILE *f, int *rows, char *e, char *o, char *l)
+{
+    // Read with fscanf (skips whitespace)
+    int ret = fscanf(f, "%d %c %c %c", rows, e, o, l);
+    
+    if (ret != 4) return ERROR;        // Must have exactly 4 values
+    if (*rows <= 0) return ERROR;      // Rows must be positive
+    
+    // Check distinct (THIS IS CRITICAL)
+    if (*e == *o || *e == *l || *o == *l) 
+        return ERROR;
+    
+    // Check printable
+    if (*e < 32 || *e > 126) return ERROR;
+    if (*o < 32 || *o > 126) return ERROR;
+    if (*l < 32 || *l > 126) return ERROR;
+    
+    return OK;
+}
+
+MAP VALIDATION
+
+int validate_map(char **map, int expected_rows, int expected_cols,
+                char empty, char obstacle)
+{
+    for (int i = 0; i < expected_rows; i++) {
+        int len = strlen(map[i]);
+        
+        // Remove trailing newline for length check
+        if (len > 0 && map[i][len-1] == '\n')
+            len--;
+        
+        if (len != expected_cols)
+            return ERROR;  // Wrong length
+        
+        for (int j = 0; j < len; j++) {
+            if (map[i][j] != empty && map[i][j] != obstacle)
+                return ERROR;  // Invalid character
+        }
+    }
+    return OK;
+}
+
+MEMORY HANDLING
+
+Map allocation:
+    char **map = malloc(rows * sizeof(char*));
+    for (i = 0; i < rows; i++)
+        map[i] = NULL;
+
+Reading lines:
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    
+    while ((read = getline(&line, &len, file)) != -1) {
+        if (read > 0 && line[read-1] == '\n')
+            line[read-1] = '\0';
+        // Process line...
+    }
+    free(line);
+
+Cleanup:
+    for (i = 0; i < rows; i++)
+        free(map[i]);
+    free(map);
+
+OUTPUT GENERATION
+
+void output_map(char **map, int rows, int cols,
+               int best_row, int best_col, int size, char full)
+{
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (i >= best_row && i < best_row + size &&
+                j >= best_col && j < best_col + size) {
+                putchar(full);
+            } else {
+                putchar(map[i][j]);
+            }
+        }
+        putchar('\n');
+    }
+}
+
+COMMON MISTAKES
+
+1. Not checking character equality (e==o, e==full, o==full)
+2. Mixing fprintf(stdout) with printf (use one consistently)
+3. Not validating row count matches header
+4. Off-by-one in square position calculation
+5. Not handling EOF correctly in getline
+6. Memory leaks from non-freed buffers
+7. Incorrect tie-breaking logic
+8. Using wrong indices (top-left calculation)
+
+TESTING APPROACH
+
+Test with valid maps first, then invalid ones.
+Verify:
+- Correct square size found
+- Correct position (top-left tie-breaking)
+- All memory freed (check with valgrind)
+- stderr/stdout separation correct
+- Works with stdin and file args

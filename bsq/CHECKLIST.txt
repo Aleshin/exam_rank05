@@ -1,0 +1,194 @@
+IMPLEMENTATION CHECKLIST FOR BSQ
+=================================
+
+BEFORE YOU START
+────────────────
+☐ Read README.md (5 min overview)
+☐ Read subject.txt (15 min full spec)
+☐ Review algorithm_notes.txt (20 min)
+☐ Understand validation rules completely
+
+
+HEADER PARSING IMPLEMENTATION
+──────────────────────────────
+☐ Use fscanf to read: rows (int), empty (char), obstacle (char), full (char)
+☐ Check: rows > 0
+☐ Check: empty != obstacle (CRITICAL)
+☐ Check: empty != full (CRITICAL)
+☐ Check: obstacle != full (CRITICAL)
+☐ Check: empty is printable (32-126)
+☐ Check: obstacle is printable (32-126)
+☐ Check: full is printable (32-126)
+☐ On any failure: return error
+
+
+MAP READING IMPLEMENTATION
+──────────────────────────
+☐ Use getline() for variable-length lines
+☐ Read exactly rows number of lines
+☐ Each line must end with newline (check and remove for validation)
+☐ Store all rows (allocate dynamically)
+☐ Track actual row length from first row
+
+
+MAP VALIDATION
+──────────────
+☐ Check: number of rows read == expected rows
+☐ Check: first row length determines width
+☐ Check: all rows have same length as first row (CRITICAL)
+☐ Check: only empty and obstacle chars present (no invalid chars)
+☐ Check: no empty cells means... (handle gracefully or error?)
+☐ On any failure: return error
+
+
+ALGORITHM IMPLEMENTATION
+────────────────────────
+☐ Implement DP approach (or brute force if O(n*m) minimum)
+☐ Find largest square size
+☐ Find square position (row, col)
+☐ Implement tie-breaking: top-first, then left-first
+☐ Test with known examples
+
+
+OUTPUT GENERATION
+─────────────────
+☐ For success: output modified map to stdout
+   - Original chars where not in square
+   - Full char where square is located
+   - Newline after each row
+   - Newline after entire map
+☐ For error: output to stderr only
+   - fprintf(stderr, "map error\n");
+   - No output to stdout on error
+
+
+MULTIPLE FILE HANDLING
+──────────────────────
+☐ If argc == 1: read from stdin
+☐ If argc > 1: process each file argument
+  ☐ fopen(argv[i], "r")
+  ☐ Process file
+  ☐ fclose(file)
+  ☐ On fopen failure: fprintf(stderr, "map error\n")
+☐ Each output followed by newline
+☐ Continue to next file after error
+
+
+MEMORY MANAGEMENT
+─────────────────
+☐ Allocate map array dynamically
+☐ Allocate each row dynamically
+☐ Free all rows
+☐ Free map array
+☐ Free getline buffer (if used)
+☐ Free any DP tables
+☐ No memory leaks (test with valgrind)
+
+
+COMPILATION & TESTING
+──────────────────────
+☐ Compiles with: gcc -Wall -Wextra -Werror
+☐ No compiler warnings
+☐ No memory leaks (valgrind test)
+☐ Runs on valid maps (produces correct square)
+☐ Runs on invalid maps (produces "map error\n")
+☐ Works with file argument
+☐ Works with stdin
+☐ Works with multiple files
+☐ Handles large maps (1000x1000)
+☐ Tie-breaking correct (top-left wins)
+
+
+TEST CASES TO VERIFY
+────────────────────
+VALID CASES:
+☐ Simple map: 5 . o x with all empty
+☐ Map with obstacle in middle
+☐ Single row
+☐ Single column  
+☐ Map with no obstacles
+☐ Map where all cells are obstacles (no solution?)
+
+INVALID CASES:
+☐ Duplicate characters (e.g., "3 . . x")
+☐ Different row lengths
+☐ Wrong number of rows
+☐ Missing header values
+☐ Non-printable characters
+☐ Invalid characters in map
+☐ Zero rows
+☐ Negative rows
+
+EDGE CASES:
+☐ 1x1 map
+☐ Multiple same-size squares (verify top-left chosen)
+☐ Square at corner (0,0)
+☐ Square at corner (bottom-right)
+☐ Very large map
+
+
+FINAL VERIFICATION
+───────────────────
+☐ All validation errors output to stderr
+☐ All successful outputs to stdout
+☐ Newlines correct (after each row, after each output)
+☐ No extra output
+☐ Characters match specification
+☐ Memory clean (no leaks)
+☐ Handles all edge cases
+☐ Works with stdin and files
+☐ Multiple files work
+☐ Tie-breaking correct
+
+
+COMMON MISTAKES TO AVOID
+────────────────────────
+✗ NOT checking character distinctness (e==o, e==full, o==full)
+  → This is the #1 mistake!
+
+✗ NOT validating all rows same length
+  → Easy to miss but critical
+
+✗ Using printf instead of fprintf(stderr)
+  → Errors must go to stderr!
+
+✗ Forgetting newline after output
+  → Each output must end with \n
+
+✗ Memory leaks from getline or map
+  → Must free everything
+
+✗ Wrong tie-breaking implementation
+  → Should prefer top, then left
+
+✗ Not supporting stdin
+  → Must work with pipes
+
+✗ Incorrect square position calculation
+  → Off-by-one errors common
+
+
+WHEN STUCK
+──────────
+1. Reread subject.txt for exact requirements
+2. Check algorithm_notes.txt for implementation patterns
+3. Review SUMMARY.txt for critical points
+4. Test with simple map first
+5. Use fprintf(stderr) to debug validation
+6. Check with valgrind for memory issues
+7. Verify character distinctness again
+
+
+ESTIMATED TIMELINE
+───────────────────
+Reading & understanding:  45 minutes
+Planning & design:         30 minutes
+Header parsing:            30 minutes
+Map reading & validation:  45 minutes
+Algorithm implementation:  60 minutes
+Output & testing:          45 minutes
+Bug fixes & refinement:    30 minutes
+─────────────────────────────────────
+Total (typical):          4-6 hours
+
+GOOD LUCK!

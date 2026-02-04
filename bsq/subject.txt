@@ -1,0 +1,117 @@
+Assignment name              : bsq
+Expected files               : *.c *.h
+Allowed functions and globals: malloc, calloc, realloc, free, fopen, fclose,
+                                getline, fscanf, fputs, fprintf, stderr, stdout, stdin, errno
+
+================================================================================
+
+OBJECTIVE
+The aim of this program is to find the biggest square on a map, avoiding obstacles.
+
+INPUT AND OUTPUT
+- Input: A file containing the map (passed as argument) or stdin if no arguments
+- Output: The modified map with the largest square filled with "full" character
+- On error: "map error\n" to stderr
+
+USAGE
+  ./a.out <mapfile>           # Read from file
+  cat <mapfile> | ./a.out     # Read from stdin
+
+MAP FORMAT
+
+The first line of the map is a header containing four space-separated values:
+  1. Number of rows (integer > 0)
+  2. Empty cell character (printable ASCII: 32-126)
+  3. Obstacle character (printable ASCII: 32-126)
+  4. Full cell character (printable ASCII: 32-126)
+
+The following rows contain the map made of empty and obstacle characters.
+Each row must end with a newline character.
+
+ALGORITHM
+
+The program must:
+1. Find the largest square (width = height = size) that fits entirely on the map
+2. The square must contain only empty cells (no obstacles)
+3. Replace all empty cells in the found square with the full character
+4. Output the modified map
+
+PRIORITY (TIE-BREAKING)
+
+If multiple squares of the same maximum size exist:
+  - Choose the one closest to the top (smallest row index)
+  - If still tied, choose the leftmost (smallest column index)
+
+VALIDATION RULES
+
+A map is INVALID if:
+  ✗ Header has not exactly 4 values
+  ✗ First value (rows) is not a positive integer
+  ✗ Any of the 3 characters is not printable (not in ASCII 32-126)
+  ✗ Any two of the 3 characters are identical
+  ✗ Rows have different lengths
+  ✗ Number of rows doesn't match the header value
+  ✗ Any row doesn't end with newline
+  ✗ Map contains characters other than empty or obstacle
+  ✗ Map has 0 rows or 0 columns
+
+If the map is invalid, print "map error\n" to stderr and continue to next map.
+
+EXAMPLE
+
+Input (example.txt):
+  9 . o x
+  ...........................
+  ....o......................
+  ............o..............
+  ...........................
+  ....o......................
+  ...............o...........
+  ...........................
+  ......o..............o.....
+  ..o.......o................
+
+Command:
+  $ ./bsq example.txt
+
+Output (stdout):
+  .....xxxxxxx...............
+  ....oxxxxxxx...............
+  .....xxxxxxxo..............
+  .....xxxxxxx...............
+  ....oxxxxxxx...............
+  .....xxxxxxx...o...........
+  .....xxxxxxx...............
+  ......o..............o.....
+  ..o.......o................
+
+(7×7 square found at position row 0, col 5)
+
+MULTIPLE MAPS
+
+Your program may receive multiple maps:
+  ./bsq map1.txt map2.txt map3.txt
+
+Process each map independently. After each output (solution or error), print newline.
+
+IMPLEMENTATION NOTES
+
+- Use getline() to handle variable-length lines
+- Use dynamic memory allocation (malloc/calloc/realloc)
+- Use fprintf(stderr, ...) for error messages (not printf)
+- Free all allocated memory before exit
+- Use O(n*m) or better algorithm (dynamic programming recommended)
+- Handle both file and stdin input
+- Each output must be followed by newline
+
+EDGE CASES
+
+- 1×1 map: valid (square is the entire map)
+- Single row or column: valid (largest square is 1×1)
+- Map with no obstacles: valid
+- Duplicate characters in header: INVALID
+- Different row lengths: INVALID
+- Missing header values: INVALID
+- Non-printable chars: INVALID
+- Rows without newlines: INVALID
+- Wrong row count: INVALID
